@@ -176,13 +176,15 @@
       justify-content: center;
       align-items: center;
       margin-top: 32px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     .stat {
-      padding: 12px 32px;
+      padding: 12px 24px;
       text-align: center;
       border-left: 1px solid var(--border);
+      flex: 1;
+      max-width: 200px;
     }
 
     .stat:first-child { border-left: none; }
@@ -207,8 +209,9 @@
     }
 
     @media (max-width: 480px) {
-      .stat { padding: 10px 18px; }
-      .stat-number { font-size: 22px; }
+      .stat { padding: 8px 10px; }
+      .stat-number { font-size: 20px; }
+      .stat-label { font-size: 9px; }
     }
 
     /* ── Abstract ── */
@@ -234,15 +237,25 @@
       left: 50%;
       transform: translateX(-50%);
       width: min(860px, 96vw);
-      height: 320px;
       pointer-events: none;
       z-index: 10;
-      border: 3px solid transparent;
-      border-image: linear-gradient(90deg,
-        #e74c3c, #f39c12, #f1c40f,
-        #2ecc71, #3498db, #9b59b6, #e74c3c) 1;
       opacity: 0;
       transition: opacity 0.3s;
+    }
+
+    #overton-window::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      padding: 3px;
+      background: linear-gradient(90deg,
+        #e74c3c, #f39c12, #f1c40f,
+        #2ecc71, #3498db, #9b59b6, #e74c3c);
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
     }
 
     h2 {
@@ -403,61 +416,7 @@
 
     .num { font-variant-numeric: tabular-nums; }
 
-    /* CI bar */
-    .ci-bar-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .ci-value {
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-      color: var(--text-secondary);
-      font-size: 12.5px;
-    }
-
-    .ci-bar {
-      position: relative;
-      width: 100px;
-      height: 16px;
-      flex-shrink: 0;
-    }
-
-    .ci-track {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--border);
-      transform: translateY(-50%);
-    }
-
-    .ci-zero {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 1.5px;
-      background: #9ca3af;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .ci-range {
-      position: absolute;
-      top: 50%;
-      height: 6px;
-      border-radius: 3px;
-      transform: translateY(-50%);
-    }
-
-    .ci-range.pos   { background: var(--sig-pos); opacity: 0.85; }
-    .ci-range.neg   { background: var(--sig-neg); opacity: 0.85; }
-    .ci-range.neut  { background: var(--ci-neutral); }
-
     .p-sig { font-weight: 600; color: var(--accent); }
-    .p-sig-neg { font-weight: 600; color: var(--sig-neg); }
 
     /* ── Table note ── */
     .table-note {
@@ -555,65 +514,6 @@
       font-style: italic;
     }
 
-    /* ── TL;DR ── */
-    .tldr {
-      max-width: 780px;
-      margin: 28px auto 40px;
-      padding: 20px 24px;
-      background: #e8ecf3;
-      border-left: 3px solid #b8c8e8;
-      border-radius: 0 6px 6px 0;
-      transition: background 0.2s, border-color 0.2s;
-    }
-
-    .tldr.any-inside {
-      background: var(--bg-subtle);
-      border-left-color: var(--accent);
-    }
-
-    .tldr-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #b8c8e8;
-      margin-bottom: 10px;
-      transition: color 0.15s;
-    }
-
-    .tldr.any-inside .tldr-label {
-      color: var(--accent);
-    }
-
-    .tldr ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .tldr li {
-      font-size: 14px;
-      color: #9daabf;
-      line-height: 1.6;
-      padding-left: 16px;
-      position: relative;
-      transition: color 0.15s;
-    }
-
-    .tldr li.inside {
-      color: var(--text);
-    }
-
-    .tldr li::before {
-      content: "→";
-      position: absolute;
-      left: 0;
-      color: inherit;
-      font-weight: 600;
-    }
 
     @media (max-width: 640px) {
       header { padding: 40px 0 32px; }
@@ -688,16 +588,6 @@
 
   <!-- ── Abstract ── -->
   <section class="abstract" id="abstract" style="padding-top: 8px;">
-    <div class="tldr">
-      <div class="tldr-label">TL;DR</div>
-      <ul>
-        <li>Models achieve OvertonScores of 0.35–0.41 on average; DeepSeek V3 performs best, but all models fall far short of the theoretical maximum of 1.0, revealing substantial room for improvement.</li>
-        <li>OvertonScore formalizes pluralistic coverage as the fraction of opinion clusters — derived from a large-scale U.S.-representative study (N = 1,208) — that a model's response represents.</li>
-        <li>An automated LLM judge achieves ρ = 0.88 rank correlation with human OvertonScores, enabling scalable evaluation without repeated human studies.</li>
-        <li>Dataset, code, and benchmark are publicly available to support progress toward more pluralistic LLMs.</li>
-      </ul>
-    </div>
-
     <h2>Abstract</h2>
     <p id="abstract-text"></p>
 
@@ -737,10 +627,9 @@
           <tr>
             <th data-col="rank">#</th>
             <th data-col="display">Model</th>
-            <th data-col="raw" class="sorted">OvertonScore <span class="sort-arrow active">↓</span></th>
-            <th data-col="adj">Adj. Coverage</th>
-            <th data-col="ci">95% CI <span style="font-weight:400;opacity:0.7;">(vs. grand mean)</span></th>
+            <th data-col="adj" class="sorted">OvertonScore <span class="sort-arrow active">↓</span></th>
             <th data-col="p"><em>p</em>-value</th>
+            <th data-col="family">Company</th>
           </tr>
         </thead>
         <tbody id="results-body"></tbody>
@@ -748,9 +637,8 @@
     </div>
 
     <p class="table-note">
-      τ = 4.0. Adj. Coverage = OLS-adjusted mean coverage with question fixed effects and cluster-robust SEs.
-      The 95% CI bar shows each model's deviation from the grand mean; bars fully to the right (blue) or left (red) of zero indicate significance.
-      <strong>Bold</strong> <em>p</em>-values are significant at α = 0.05.
+      τ = 4.0. OvertonScore = OLS-adjusted mean coverage with question fixed effects and cluster-robust SEs.
+      <strong>Bold</strong> <em>p</em>-values are significant vs. grand mean at α = 0.05.
     </p>
   </section>
 
@@ -760,14 +648,12 @@
     <div class="citation-block">
       <button class="copy-btn" id="copy-btn">Copy</button>
       <pre id="bibtex">@inproceedings{poole-dayan2026benchmarking,
-  author    = {Poole-Dayan, Elinor and Wu, Jiayi and Sorensen, Taylor
-               and Pei, Jiaxin and Bakker, Michiel A.},
-  title     = {Benchmarking Overton Pluralism in {LLMs}},
-  booktitle = {The Fourteenth International Conference on Learning
-               Representations (ICLR)},
-  year      = {2026},
-  month     = apr,
-  url       = {https://arxiv.org/abs/2512.01351}
+  author = {Poole-Dayan, Elinor and Wu, Jiayi and Sorensen, Taylor and Pei, Jiaxin and Bakker, Michiel A.},
+  title = {Benchmarking Overton Pluralism in LLMs},
+  booktitle = {The Fourteenth International Conference on Learning Representations (ICLR)},
+  year = {2026},
+  month = apr,
+  url = {https://arxiv.org/abs/2512.01351}
 }</pre>
     </div>
   </section>
@@ -809,49 +695,40 @@
 
   const win = document.getElementById("overton-window");
   const resultsSection = document.getElementById("results");
-  const BOX_H = 320;
+  const titleEl = document.querySelector("h1");
+  const statsEl = document.querySelector(".stats-row");
 
-  // Position box to frame title → stats row (excluding venue badge and link buttons)
-  const titleEl  = document.querySelector("h1");
-  const statsEl  = document.querySelector(".stats-row");
-  const tRect = titleEl.getBoundingClientRect();
-  const sRect = statsEl.getBoundingClientRect();
-  const contentMid = (tRect.top + sRect.bottom) / 2;
-  const boxTop = Math.round(contentMid - BOX_H / 2);
-  win.style.top = boxTop + "px";
-  window._overtonBoxTop = boxTop;
+  let boxTop, boxH;
+
+  function positionBox() {
+    const tRect = titleEl.getBoundingClientRect();
+    const sRect = statsEl.getBoundingClientRect();
+    const pad = 16;
+    boxH = Math.round(sRect.bottom - tRect.top + pad * 2);
+    boxTop = Math.round(tRect.top - pad);
+    win.style.height = boxH + "px";
+    win.style.top = boxTop + "px";
+    window._overtonBoxTop = boxTop;
+  }
+
+  positionBox();
 
   function update() {
-    // Hide when the bottom of the box reaches the top of the Results section
     const rRect = resultsSection.getBoundingClientRect();
-    const hide = rRect.top <= boxTop + BOX_H;
+    const hide = rRect.top <= boxTop + boxH;
     win.style.opacity = hide ? "0" : "1";
 
     if (hide) return;
     const wRect = win.getBoundingClientRect();
-
-    // Abstract words
     container.querySelectorAll(".word").forEach(span => {
       const r = span.getBoundingClientRect();
       const inside = r.top >= wRect.top - 4 && r.bottom <= wRect.bottom + 4;
       span.classList.toggle("inside", inside);
     });
-
-    // TL;DR items
-    const tldrEl = document.querySelector(".tldr");
-    const tldrItems = tldrEl.querySelectorAll("li");
-    tldrItems.forEach(li => {
-      const r = li.getBoundingClientRect();
-      const center = (r.top + r.bottom) / 2;
-      const inside = center >= wRect.top && center <= wRect.bottom;
-      li.classList.toggle("inside", inside);
-    });
-    const anyInside = Array.from(tldrItems).some(li => li.classList.contains("inside"));
-    tldrEl.classList.toggle("any-inside", anyInside);
   }
 
   window.addEventListener("scroll", update, { passive: true });
-  window.addEventListener("resize", update);
+  window.addEventListener("resize", () => { positionBox(); update(); });
   update();
 })();
 
@@ -953,56 +830,18 @@ const RESULTS = {
 let state = {
   dataset: "full",
   weight:  "unweighted",
-  sortCol: "raw",
+  sortCol: "adj",
   sortDir: -1,   // -1 = descending
 };
 
 // ─────────────────────────────────────────────
 //  Rendering
 // ─────────────────────────────────────────────
-const CI_DOMAIN = 0.40;   // bars span [-0.40, 0.40]
-
-function ciBarHTML(ci_lo, ci_hi) {
-  const toPercent = v => ((v + CI_DOMAIN) / (2 * CI_DOMAIN)) * 100;
-  const leftPct   = toPercent(ci_lo);
-  const widthPct  = toPercent(ci_hi) - leftPct;
-  const crossesZero = ci_lo < 0 && ci_hi > 0;
-  const allPositive = ci_lo >= 0;
-  const allNegative = ci_hi <= 0;
-  const cls = crossesZero ? "neut" : allPositive ? "pos" : "neg";
-  const ciText = `[${fmt2(ci_lo)}, ${fmt2(ci_hi)}]`;
-
-  return `
-    <div class="ci-bar-wrap">
-      <span class="ci-value">${ciText}</span>
-      <div class="ci-bar" title="${ciText}">
-        <div class="ci-track"></div>
-        <div class="ci-zero"></div>
-        <div class="ci-range ${cls}" style="left:${leftPct.toFixed(1)}%;width:${widthPct.toFixed(1)}%"></div>
-      </div>
-    </div>`;
-}
-
 function fmt3(n) { return n.toFixed(3); }
-function fmt2(n) { return (n >= 0 ? "+" : "") + n.toFixed(3); }
 
 function pDisplay(p) {
-  const allNeg = (row) => row.ci_hi <= 0;
-  let txt = p < 0.001 ? "< 0.001" : p.toFixed(3);
-  if (p < 0.05) {
-    // determine direction from context — will be set per row
-    return `<span class="p-sig">${txt}</span>`;
-  }
-  return `<span>${txt}</span>`;
-}
-
-function pDisplayWithDir(p, ci_lo, ci_hi) {
-  let txt = p < 0.001 ? "< 0.001" : p.toFixed(3);
-  if (p < 0.05) {
-    const cls = ci_hi <= 0 ? "p-sig-neg" : "p-sig";
-    return `<span class="${cls}">${txt}</span>`;
-  }
-  return `<span>${txt}</span>`;
+  const txt = p < 0.001 ? "< 0.001" : p.toFixed(3);
+  return p < 0.05 ? `<span class="p-sig">${txt}</span>` : `<span>${txt}</span>`;
 }
 
 function renderTable() {
@@ -1010,14 +849,15 @@ function renderTable() {
 
   // Sort
   rows.sort((a, b) => {
-    let va = a[state.sortCol] ?? 0;
-    let vb = b[state.sortCol] ?? 0;
     if (state.sortCol === "display") {
-      va = MODEL_META[a.id].display;
-      vb = MODEL_META[b.id].display;
+      const va = MODEL_META[a.id].display, vb = MODEL_META[b.id].display;
       return va < vb ? state.sortDir : va > vb ? -state.sortDir : 0;
     }
-    return (va - vb) * state.sortDir;
+    if (state.sortCol === "family") {
+      const va = FAMILY_LABELS[MODEL_META[a.id].family], vb = FAMILY_LABELS[MODEL_META[b.id].family];
+      return va < vb ? state.sortDir : va > vb ? -state.sortDir : 0;
+    }
+    return ((a[state.sortCol] ?? 0) - (b[state.sortCol] ?? 0)) * state.sortDir;
   });
 
   const tbody = document.getElementById("results-body");
@@ -1028,14 +868,10 @@ function renderTable() {
     return `
       <tr>
         <td class="rank">${i + 1}</td>
-        <td>
-          <span class="model-name">${meta.display}</span>
-          <span class="family-badge ${familyCls}">${familyLabel}</span>
-        </td>
-        <td class="num">${fmt3(row.raw)}</td>
+        <td><span class="model-name">${meta.display}</span></td>
         <td class="num">${fmt3(row.adj)}</td>
-        <td>${ciBarHTML(row.ci_lo, row.ci_hi)}</td>
-        <td>${pDisplayWithDir(row.p, row.ci_lo, row.ci_hi)}</td>
+        <td>${pDisplay(row.p)}</td>
+        <td><span class="family-badge ${familyCls}">${familyLabel}</span></td>
       </tr>`;
   }).join("");
 
@@ -1093,7 +929,7 @@ document.querySelector("thead").addEventListener("click", e => {
 // Add sort arrows to sortable columns
 document.querySelectorAll("thead th[data-col]").forEach(th => {
   const col = th.dataset.col;
-  if (col === "rank" || col === "ci") return;
+  if (col === "rank") return;
   if (!th.querySelector(".sort-arrow")) {
     th.innerHTML += ` <span class="sort-arrow">↕</span>`;
   }
