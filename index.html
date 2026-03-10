@@ -722,11 +722,13 @@
   let boxTop, boxH;
 
   function positionBox() {
+    const scrollY = window.scrollY;
     const tRect = titleEl.getBoundingClientRect();
     const sRect = statsEl.getBoundingClientRect();
     const pad = 16;
+    // Add scrollY to convert viewport-relative coords to document-relative (= viewport pos at scroll=0)
     boxH = Math.round(sRect.bottom - tRect.top + pad * 2);
-    boxTop = Math.round(tRect.top - pad);
+    boxTop = Math.round(tRect.top + scrollY - pad);
     win.style.height = boxH + "px";
     win.style.top = boxTop + "px";
     window._overtonBoxTop = boxTop;
