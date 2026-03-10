@@ -803,6 +803,7 @@
   const contentMid = (tRect.top + sRect.bottom) / 2;
   const boxTop = Math.round(contentMid - BOX_H / 2);
   win.style.top = boxTop + "px";
+  window._overtonBoxTop = boxTop;
 
   function update() {
     // Hide when the bottom of the box reaches the top of the Results section
@@ -1076,6 +1077,14 @@ document.getElementById("copy-btn").addEventListener("click", () => {
     btn.textContent = "Copied!";
     setTimeout(() => { btn.textContent = "Copy"; }, 2000);
   });
+});
+
+// ── Abstract nav link: scroll so text starts inside the Overton box ──
+document.querySelector('.nav-link[href="#abstract"]').addEventListener('click', function(e) {
+  e.preventDefault();
+  const abstractText = document.getElementById('abstract-text');
+  const scrollTarget = abstractText.offsetTop - (window._overtonBoxTop || 0) - 8;
+  window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
 });
 
 // ── Init ──
