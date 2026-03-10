@@ -51,6 +51,23 @@ RESULTS = {
 ```
 Each row: `{ id, raw, adj, ci_lo, ci_hi, p }`. Model display names and family badges are in `MODEL_META`.
 
+### Source files (where the numbers come from)
+
+The numbers are sourced from the private research repo at `~/code/OvertonEvals/outputs/`:
+
+| Dataset | Source file |
+|---------|-------------|
+| **Full** (ModelSlant + PRISM combined) | `overton_scores_and_ols_tau4.0_merged.md` — also mirrored in `~/code/overtonbench/outputs/overton_scores_and_ols_tau4.0.md` |
+| **ModelSlant** | `overton_scores_and_ols_tau4.0.md` (the unsuffixed one in OvertonEvals) |
+| **PRISM** | `overton_scores_and_ols_tau4.0_prism.md` |
+
+Each `.md` file has two tables: `KMEANS` (unweighted) and `KMEANS weighted`. The columns map to:
+- `OvertonScore (raw)` → `raw`
+- `adj. coverage (95% CI)` → split into `adj` (the point estimate) and `ci_lo`, `ci_hi` (the bracket values)
+- `p (vs. grand mean)` → `p`
+
+τ = 4.0 is the primary threshold used throughout. If rerunning, use `python src/benchmark_overton_pipeline.py --weighted --source [modelslant|prism]` in `~/code/overtonbench/` to regenerate.
+
 ## Key design decisions
 
 - **Single file**: No build step, no framework, no external dependencies beyond Google Fonts. Just edit and push.
