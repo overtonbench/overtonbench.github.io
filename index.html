@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benchmarking Overton Pluralism in LLMs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #3461c1;
+      --accent-light: #dce6f8;
+      --text: #1a2035;
+      --text-secondary: #5e6e8a;
+      --border: #c8d1e0;
+      --bg: #eff1f5;
+      --bg-subtle: #e6e9f0;
+      --sig-pos: #3461c1;
+      --sig-neg: #c0392b;
+      --ci-neutral: #b8c2d4;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 56px 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    /* ── Header ── */
+    header {
+      padding: 64px 0 48px;
+      text-align: center;
+    }
+
+    .venue-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(22px, 4vw, 34px);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: 0;
+      color: var(--text);
+      margin-bottom: 28px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .authors {
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.8;
+    }
+
+    .authors a {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .authors a:hover { color: #1a3d9e; text-decoration: none; }
+
+    .affiliations {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+
+    /* ── Link Buttons ── */
+    .link-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+      text-decoration: none;
+    }
+
+    .btn-icon { font-size: 16px; line-height: 1; }
+
+    /* ── Abstract ── */
+    .abstract p {
+      font-size: 15.5px;
+      max-width: 780px;
+      margin: 0 auto;
+      line-height: 1.9;
+    }
+
+    .abstract p .word {
+      color: #9daabf;
+      transition: color 0.15s;
+    }
+
+    .abstract p .word.inside {
+      color: #1a2035;
+    }
+
+    /* ── Overton Window ── */
+    #overton-window {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(860px, 96vw);
+      height: 320px;
+      pointer-events: none;
+      z-index: 10;
+      border: 3px solid transparent;
+      border-image: linear-gradient(90deg,
+        #e74c3c, #f39c12, #f1c40f,
+        #2ecc71, #3498db, #9b59b6, #e74c3c) 1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    h2 {
+      font-family: 'Lora', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text);
+      letter-spacing: 0;
+    }
+
+    /* ── Figure ── */
+    .figure-wrap {
+      margin-top: 36px;
+      text-align: center;
+    }
+
+    .figure-wrap img {
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .figure-caption {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── Results Section ── */
+    .results-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .control-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .toggle-group {
+      display: flex;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .toggle-btn {
+      padding: 7px 16px;
+      font-size: 13.5px;
+      font-weight: 500;
+      background: var(--bg);
+      color: var(--text-secondary);
+      border: none;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      white-space: nowrap;
+    }
+
+    .toggle-btn + .toggle-btn { border-left: 1.5px solid var(--border); }
+
+    .toggle-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .toggle-btn:hover:not(.active) {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    /* ── Table ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead tr {
+      background: var(--bg-subtle);
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    thead th {
+      padding: 11px 14px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    thead th:hover { color: var(--accent); }
+
+    thead th.sorted { color: var(--accent); }
+
+    .sort-arrow { margin-left: 3px; opacity: 0.5; font-size: 10px; }
+    .sort-arrow.active { opacity: 1; }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f8faff; }
+
+    td {
+      padding: 11px 14px;
+      vertical-align: middle;
+    }
+
+    .rank { color: var(--text-secondary); font-size: 12px; font-weight: 500; }
+
+    .model-name { font-weight: 500; }
+
+    .family-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 2px 7px;
+      border-radius: 20px;
+      margin-left: 7px;
+      vertical-align: middle;
+      text-transform: uppercase;
+    }
+
+    .family-openai   { background: #e0f2fe; color: #0369a1; }
+    .family-anthropic { background: #fef3c7; color: #92400e; }
+    .family-meta     { background: #ede9fe; color: #5b21b6; }
+    .family-deepseek { background: #d1fae5; color: #065f46; }
+    .family-google   { background: #fce7f3; color: #9d174d; }
+
+    .num { font-variant-numeric: tabular-nums; }
+
+    /* CI bar */
+    .ci-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ci-value {
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      color: var(--text-secondary);
+      font-size: 12.5px;
+    }
+
+    .ci-bar {
+      position: relative;
+      width: 100px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .ci-track {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--border);
+      transform: translateY(-50%);
+    }
+
+    .ci-zero {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1.5px;
+      background: #9ca3af;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .ci-range {
+      position: absolute;
+      top: 50%;
+      height: 6px;
+      border-radius: 3px;
+      transform: translateY(-50%);
+    }
+
+    .ci-range.pos   { background: var(--sig-pos); opacity: 0.85; }
+    .ci-range.neg   { background: var(--sig-neg); opacity: 0.85; }
+    .ci-range.neut  { background: var(--ci-neutral); }
+
+    .p-sig { font-weight: 600; color: var(--accent); }
+    .p-sig-neg { font-weight: 600; color: var(--sig-neg); }
+
+    /* ── Table note ── */
+    .table-note {
+      margin-top: 12px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── Citation ── */
+    .citation-block {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      position: relative;
+    }
+
+    .citation-block pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #374151;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .copy-btn:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+
+    /* ── Footer ── */
+    footer {
+      padding: 28px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 40px 0 32px; }
+      section { padding: 40px 0; }
+      h1 { font-size: 22px; }
+      .results-controls { gap: 14px; }
+      .ci-bar { width: 70px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Overton Window -->
+<div id="overton-window"></div>
+
+<div class="container">
+
+  <!-- ── Header ── -->
+  <header>
+    <div class="venue-badge">ICLR 2026</div>
+    <h1>Benchmarking Overton Pluralism in LLMs</h1>
+
+    <div class="authors">
+      <a href="https://elinorp-d.github.io/">Elinor Poole-Dayan</a><sup>1</sup>&ensp;
+      <a href="https://jiayiw005.github.io/">Jiayi Wu</a><sup>1,2</sup>&ensp;
+      <a href="https://tsor13.github.io/">Taylor Sorensen</a><sup>3</sup>&ensp;
+      <a href="https://jiaxin-pei.github.io/">Jiaxin Pei</a><sup>4</sup>&ensp;
+      <a href="https://miba.dev/">Michiel A. Bakker</a><sup>1</sup>
+    </div>
+    <div class="affiliations">
+      <sup>1</sup>MIT &nbsp;&nbsp;
+      <sup>2</sup>Brown University &nbsp;&nbsp;
+      <sup>3</sup>University of Washington &nbsp;&nbsp;
+      <sup>4</sup>Stanford University
+    </div>
+
+    <div class="link-buttons">
+      <a class="btn" href="https://arxiv.org/abs/2512.01351" target="_blank">
+        <span class="btn-icon">📄</span> Paper
+      </a>
+      <a class="btn" href="https://huggingface.co/datasets/elinorpd/overtonbench" target="_blank">
+        <span class="btn-icon">🤗</span> Dataset
+      </a>
+      <a class="btn" href="https://github.com/elinorpd/overtonbench" target="_blank">
+        <span class="btn-icon">💻</span> Code
+      </a>
+    </div>
+  </header>
+
+  <!-- ── Abstract ── -->
+  <section class="abstract">
+    <h2>Abstract</h2>
+    <p id="abstract-text"></p>
+
+    <div class="figure-wrap">
+      <img src="assets/fig1.png" alt="Overview of the OvertonBench pipeline: LLM responses are rated by diverse human participants, opinions are clustered, and OvertonScore measures how many clusters a response covers." />
+      <p class="figure-caption">
+        <strong>Figure 1.</strong> OvertonBench pipeline. Prolific participants rate LLM responses on how well they represent their viewpoint. Ratings are clustered into opinion groups, and OvertonScore measures what fraction of clusters a response covers above a threshold τ.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Results ── -->
+  <section id="results">
+    <h2>Results</h2>
+
+    <div class="results-controls">
+      <div class="control-group">
+        <span class="control-label">Dataset</span>
+        <div class="toggle-group" id="dataset-toggle">
+          <button class="toggle-btn active" data-value="full">Full (ModelSlant + PRISM)</button>
+          <button class="toggle-btn" data-value="modelslant">ModelSlant</button>
+          <button class="toggle-btn" data-value="prism">PRISM</button>
+        </div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Scoring</span>
+        <div class="toggle-group" id="weight-toggle">
+          <button class="toggle-btn active" data-value="unweighted">Unweighted</button>
+          <button class="toggle-btn" data-value="weighted">Weighted</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="results-table">
+        <thead>
+          <tr>
+            <th data-col="rank">#</th>
+            <th data-col="display">Model</th>
+            <th data-col="raw" class="sorted">OvertonScore <span class="sort-arrow active">↓</span></th>
+            <th data-col="adj">Adj. Coverage</th>
+            <th data-col="ci">95% CI <span style="font-weight:400;opacity:0.7;">(vs. grand mean)</span></th>
+            <th data-col="p"><em>p</em>-value</th>
+          </tr>
+        </thead>
+        <tbody id="results-body"></tbody>
+      </table>
+    </div>
+
+    <p class="table-note">
+      τ = 4.0. Adj. Coverage = OLS-adjusted mean coverage with question fixed effects and cluster-robust SEs.
+      The 95% CI bar shows each model's deviation from the grand mean; bars fully to the right (blue) or left (red) of zero indicate significance.
+      <strong>Bold</strong> <em>p</em>-values are significant at α = 0.05.
+    </p>
+  </section>
+
+  <!-- ── Citation ── -->
+  <section id="citation">
+    <h2>Citation</h2>
+    <div class="citation-block">
+      <button class="copy-btn" id="copy-btn">Copy</button>
+      <pre id="bibtex">@inproceedings{poole-dayan2026benchmarking,
+  author    = {Poole-Dayan, Elinor and Wu, Jiayi and Sorensen, Taylor
+               and Pei, Jiaxin and Bakker, Michiel A.},
+  title     = {Benchmarking Overton Pluralism in {LLMs}},
+  booktitle = {The Fourteenth International Conference on Learning
+               Representations (ICLR)},
+  year      = {2026},
+  month     = apr,
+  url       = {https://arxiv.org/abs/2512.01351}
+}</pre>
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<footer>
+  <div class="container">
+    MIT License &mdash; Dataset on <a href="https://huggingface.co/datasets/elinorpd/overtonbench">HuggingFace</a>
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+//  Overton Window effect
+// ─────────────────────────────────────────────
+(function () {
+  const ABSTRACT = "We introduce OvertonBench, a novel framework for measuring Overton pluralism in LLMs\u2014the extent to which diverse viewpoints are represented in model outputs. We (i) formalize Overton pluralism as a set coverage metric (OvertonScore), (ii) conduct a large-scale U.S.-representative human study (N\u2009=\u20091208; 60 questions; 8 LLMs), and (iii) develop an automated benchmark that closely reproduces human judgments. On average, models achieve OvertonScores of 0.35\u20130.41, with DeepSeek V3 performing best; yet all models remain far below the theoretical maximum of 1.0, revealing substantial headroom for improvement. Because repeated large-scale human studies are costly and slow, scalable evaluation tools are essential for model development. Hence, we propose an automated benchmark that achieves high rank correlation with human judgments (\u03c1\u2009=\u20090.88), providing a practical proxy without replacing human assessment. By turning pluralistic alignment from a normative aim into a measurable benchmark, our work establishes a foundation for systematic progress toward more pluralistic LLMs.";
+
+  // Build word spans
+  const container = document.getElementById("abstract-text");
+  ABSTRACT.split(" ").forEach((word, i) => {
+    const span = document.createElement("span");
+    span.className = "word";
+    span.textContent = word;
+    container.appendChild(span);
+    if (i < ABSTRACT.split(" ").length - 1) container.appendChild(document.createTextNode(" "));
+  });
+
+  const win = document.getElementById("overton-window");
+  const resultsSection = document.getElementById("results");
+  const BOX_H = 320;
+
+  // Position box to frame the header at load time — fixed for the whole session
+  const header = document.querySelector("header");
+  const hRect = header.getBoundingClientRect();
+  const boxTop = Math.max(8, hRect.top + hRect.height / 2 - BOX_H / 2);
+  win.style.top = boxTop + "px";
+
+  function update() {
+    // Hide when the bottom of the box reaches the top of the Results section
+    const rRect = resultsSection.getBoundingClientRect();
+    const hide = rRect.top <= boxTop + BOX_H;
+    win.style.opacity = hide ? "0" : "1";
+
+    if (hide) return;
+    const wRect = win.getBoundingClientRect();
+    container.querySelectorAll(".word").forEach(span => {
+      const r = span.getBoundingClientRect();
+      const inside = r.top >= wRect.top - 4 && r.bottom <= wRect.bottom + 4;
+      span.classList.toggle("inside", inside);
+    });
+  }
+
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+  update();
+})();
+
+// ─────────────────────────────────────────────
+//  Data
+// ─────────────────────────────────────────────
+const MODEL_META = {
+  "deepseek-v3":                      { display: "DeepSeek-V3",        family: "deepseek"   },
+  "deepseek.r1":                      { display: "DeepSeek-R1",        family: "deepseek"   },
+  "gpt-4.1":                          { display: "GPT-4.1",            family: "openai"     },
+  "llama3-3-70b-instruct":            { display: "Llama 3.3 70B",      family: "meta"       },
+  "o4-mini":                          { display: "o4-mini",            family: "openai"     },
+  "claude-3-7-sonnet-20250219":       { display: "Claude 3.7 Sonnet",  family: "anthropic"  },
+  "llama-4-maverick-17b-128e-instruct":{ display: "Llama 4 Maverick",  family: "meta"       },
+  "gemma-3-27b-it":                   { display: "Gemma 3 27B",        family: "google"     },
+};
+
+const FAMILY_LABELS = {
+  openai:    "OpenAI",
+  anthropic: "Anthropic",
+  meta:      "Meta",
+  deepseek:  "DeepSeek",
+  google:    "Google",
+};
+
+// Full dataset = ModelSlant + PRISM combined
+const RESULTS = {
+  full: {
+    unweighted: [
+      { id: "deepseek-v3",                       raw: 0.433, adj: 0.417, ci_lo: -0.012, ci_hi:  0.063, p: 0.184  },
+      { id: "deepseek.r1",                       raw: 0.389, adj: 0.404, ci_lo: -0.024, ci_hi:  0.049, p: 0.495  },
+      { id: "gpt-4.1",                           raw: 0.388, adj: 0.397, ci_lo: -0.024, ci_hi:  0.037, p: 0.690  },
+      { id: "llama3-3-70b-instruct",             raw: 0.407, adj: 0.397, ci_lo: -0.031, ci_hi:  0.043, p: 0.744  },
+      { id: "o4-mini",                           raw: 0.393, adj: 0.393, ci_lo: -0.034, ci_hi:  0.038, p: 0.918  },
+      { id: "claude-3-7-sonnet-20250219",        raw: 0.389, adj: 0.387, ci_lo: -0.033, ci_hi:  0.024, p: 0.750  },
+      { id: "llama-4-maverick-17b-128e-instruct",raw: 0.381, adj: 0.384, ci_lo: -0.037, ci_hi:  0.024, p: 0.665  },
+      { id: "gemma-3-27b-it",                    raw: 0.347, adj: 0.350, ci_lo: -0.074, ci_hi: -0.008, p: 0.0157 },
+    ],
+    weighted: [
+      { id: "deepseek-v3",                       raw: 0.530, adj: 0.530, ci_lo:  0.004, ci_hi:  0.101, p: 0.0353 },
+      { id: "llama3-3-70b-instruct",             raw: 0.520, adj: 0.519, ci_lo: -0.011, ci_hi:  0.094, p: 0.121  },
+      { id: "gpt-4.1",                           raw: 0.492, adj: 0.492, ci_lo: -0.026, ci_hi:  0.054, p: 0.497  },
+      { id: "o4-mini",                           raw: 0.486, adj: 0.486, ci_lo: -0.053, ci_hi:  0.069, p: 0.798  },
+      { id: "llama-4-maverick-17b-128e-instruct",raw: 0.485, adj: 0.484, ci_lo: -0.043, ci_hi:  0.055, p: 0.802  },
+      { id: "claude-3-7-sonnet-20250219",        raw: 0.440, adj: 0.442, ci_lo: -0.079, ci_hi:  0.008, p: 0.113  },
+      { id: "deepseek.r1",                       raw: 0.440, adj: 0.440, ci_lo: -0.086, ci_hi:  0.011, p: 0.128  },
+      { id: "gemma-3-27b-it",                    raw: 0.428, adj: 0.429, ci_lo: -0.095, ci_hi: -0.003, p: 0.0363 },
+    ],
+  },
+  modelslant: {
+    unweighted: [
+      { id: "o4-mini",                           raw: 0.374, adj: 0.358, ci_lo:  0.003, ci_hi:  0.161, p: 0.043   },
+      { id: "deepseek.r1",                       raw: 0.284, adj: 0.309, ci_lo: -0.022, ci_hi:  0.088, p: 0.241   },
+      { id: "llama3-3-70b-instruct",             raw: 0.301, adj: 0.289, ci_lo: -0.072, ci_hi:  0.097, p: 0.778   },
+      { id: "gemma-3-27b-it",                    raw: 0.264, adj: 0.282, ci_lo: -0.052, ci_hi:  0.062, p: 0.858   },
+      { id: "gpt-4.1",                           raw: 0.277, adj: 0.268, ci_lo: -0.051, ci_hi:  0.034, p: 0.689   },
+      { id: "llama-4-maverick-17b-128e-instruct",raw: 0.265, adj: 0.261, ci_lo: -0.064, ci_hi:  0.033, p: 0.526   },
+      { id: "claude-3-7-sonnet-20250219",        raw: 0.207, adj: 0.226, ci_lo: -0.102, ci_hi:  0.001, p: 0.0543  },
+      { id: "deepseek-v3",                       raw: 0.240, adj: 0.219, ci_lo: -0.104, ci_hi: -0.010, p: 0.0173  },
+    ],
+    weighted: [
+      { id: "o4-mini",                           raw: 0.540, adj: 0.540, ci_lo:  0.107, ci_hi:  0.330, p: 0.000118 },
+      { id: "llama3-3-70b-instruct",             raw: 0.398, adj: 0.397, ci_lo: -0.041, ci_hi:  0.192, p: 0.205   },
+      { id: "gpt-4.1",                           raw: 0.375, adj: 0.375, ci_lo: -0.022, ci_hi:  0.128, p: 0.166   },
+      { id: "llama-4-maverick-17b-128e-instruct",raw: 0.315, adj: 0.316, ci_lo: -0.091, ci_hi:  0.080, p: 0.893   },
+      { id: "deepseek-v3",                       raw: 0.271, adj: 0.269, ci_lo: -0.137, ci_hi:  0.032, p: 0.224   },
+      { id: "gemma-3-27b-it",                    raw: 0.250, adj: 0.250, ci_lo: -0.173, ci_hi:  0.030, p: 0.168   },
+      { id: "deepseek.r1",                       raw: 0.249, adj: 0.249, ci_lo: -0.155, ci_hi:  0.010, p: 0.0853  },
+      { id: "claude-3-7-sonnet-20250219",        raw: 0.177, adj: 0.177, ci_lo: -0.224, ci_hi: -0.065, p: 0.00035 },
+    ],
+  },
+  prism: {
+    unweighted: [
+      { id: "deepseek-v3",                       raw: 0.498, adj: 0.492, ci_lo:  0.019, ci_hi:  0.107, p: 0.00513 },
+      { id: "claude-3-7-sonnet-20250219",        raw: 0.450, adj: 0.445, ci_lo: -0.018, ci_hi:  0.049, p: 0.350   },
+      { id: "gpt-4.1",                           raw: 0.425, adj: 0.442, ci_lo: -0.026, ci_hi:  0.052, p: 0.522   },
+      { id: "deepseek.r1",                       raw: 0.424, adj: 0.433, ci_lo: -0.042, ci_hi:  0.049, p: 0.881   },
+      { id: "llama3-3-70b-instruct",             raw: 0.443, adj: 0.433, ci_lo: -0.036, ci_hi:  0.043, p: 0.861   },
+      { id: "llama-4-maverick-17b-128e-instruct",raw: 0.420, adj: 0.427, ci_lo: -0.041, ci_hi:  0.036, p: 0.890   },
+      { id: "o4-mini",                           raw: 0.400, adj: 0.395, ci_lo: -0.066, ci_hi: -0.002, p: 0.039   },
+      { id: "gemma-3-27b-it",                    raw: 0.375, adj: 0.367, ci_lo: -0.100, ci_hi: -0.024, p: 0.00156 },
+    ],
+    weighted: [
+      { id: "deepseek-v3",                       raw: 0.617, adj: 0.617, ci_lo:  0.032, ci_hi:  0.142, p: 0.00205 },
+      { id: "llama3-3-70b-instruct",             raw: 0.561, adj: 0.560, ci_lo: -0.028, ci_hi:  0.088, p: 0.312   },
+      { id: "llama-4-maverick-17b-128e-instruct",raw: 0.542, adj: 0.540, ci_lo: -0.049, ci_hi:  0.070, p: 0.734   },
+      { id: "gpt-4.1",                           raw: 0.531, adj: 0.531, ci_lo: -0.046, ci_hi:  0.049, p: 0.964   },
+      { id: "claude-3-7-sonnet-20250219",        raw: 0.528, adj: 0.530, ci_lo: -0.047, ci_hi:  0.048, p: 0.976   },
+      { id: "deepseek.r1",                       raw: 0.503, adj: 0.504, ci_lo: -0.085, ci_hi:  0.032, p: 0.383   },
+      { id: "gemma-3-27b-it",                    raw: 0.487, adj: 0.488, ci_lo: -0.093, ci_hi:  0.010, p: 0.114   },
+      { id: "o4-mini",                           raw: 0.468, adj: 0.468, ci_lo: -0.121, ci_hi: -0.002, p: 0.0417  },
+    ],
+  },
+};
+
+// ─────────────────────────────────────────────
+//  State
+// ─────────────────────────────────────────────
+let state = {
+  dataset: "full",
+  weight:  "unweighted",
+  sortCol: "raw",
+  sortDir: -1,   // -1 = descending
+};
+
+// ─────────────────────────────────────────────
+//  Rendering
+// ─────────────────────────────────────────────
+const CI_DOMAIN = 0.40;   // bars span [-0.40, 0.40]
+
+function ciBarHTML(ci_lo, ci_hi) {
+  const toPercent = v => ((v + CI_DOMAIN) / (2 * CI_DOMAIN)) * 100;
+  const leftPct   = toPercent(ci_lo);
+  const widthPct  = toPercent(ci_hi) - leftPct;
+  const crossesZero = ci_lo < 0 && ci_hi > 0;
+  const allPositive = ci_lo >= 0;
+  const allNegative = ci_hi <= 0;
+  const cls = crossesZero ? "neut" : allPositive ? "pos" : "neg";
+  const ciText = `[${fmt2(ci_lo)}, ${fmt2(ci_hi)}]`;
+
+  return `
+    <div class="ci-bar-wrap">
+      <span class="ci-value">${ciText}</span>
+      <div class="ci-bar" title="${ciText}">
+        <div class="ci-track"></div>
+        <div class="ci-zero"></div>
+        <div class="ci-range ${cls}" style="left:${leftPct.toFixed(1)}%;width:${widthPct.toFixed(1)}%"></div>
+      </div>
+    </div>`;
+}
+
+function fmt3(n) { return n.toFixed(3); }
+function fmt2(n) { return (n >= 0 ? "+" : "") + n.toFixed(3); }
+
+function pDisplay(p) {
+  const allNeg = (row) => row.ci_hi <= 0;
+  let txt = p < 0.001 ? "< 0.001" : p.toFixed(3);
+  if (p < 0.05) {
+    // determine direction from context — will be set per row
+    return `<span class="p-sig">${txt}</span>`;
+  }
+  return `<span>${txt}</span>`;
+}
+
+function pDisplayWithDir(p, ci_lo, ci_hi) {
+  let txt = p < 0.001 ? "< 0.001" : p.toFixed(3);
+  if (p < 0.05) {
+    const cls = ci_hi <= 0 ? "p-sig-neg" : "p-sig";
+    return `<span class="${cls}">${txt}</span>`;
+  }
+  return `<span>${txt}</span>`;
+}
+
+function renderTable() {
+  const rows = RESULTS[state.dataset][state.weight].slice();
+
+  // Sort
+  rows.sort((a, b) => {
+    let va = a[state.sortCol] ?? 0;
+    let vb = b[state.sortCol] ?? 0;
+    if (state.sortCol === "display") {
+      va = MODEL_META[a.id].display;
+      vb = MODEL_META[b.id].display;
+      return va < vb ? state.sortDir : va > vb ? -state.sortDir : 0;
+    }
+    return (va - vb) * state.sortDir;
+  });
+
+  const tbody = document.getElementById("results-body");
+  tbody.innerHTML = rows.map((row, i) => {
+    const meta = MODEL_META[row.id];
+    const familyCls = `family-${meta.family}`;
+    const familyLabel = FAMILY_LABELS[meta.family];
+    return `
+      <tr>
+        <td class="rank">${i + 1}</td>
+        <td>
+          <span class="model-name">${meta.display}</span>
+          <span class="family-badge ${familyCls}">${familyLabel}</span>
+        </td>
+        <td class="num">${fmt3(row.raw)}</td>
+        <td class="num">${fmt3(row.adj)}</td>
+        <td>${ciBarHTML(row.ci_lo, row.ci_hi)}</td>
+        <td>${pDisplayWithDir(row.p, row.ci_lo, row.ci_hi)}</td>
+      </tr>`;
+  }).join("");
+
+  // Update sort arrows
+  document.querySelectorAll("thead th").forEach(th => {
+    const col = th.dataset.col;
+    const arrow = th.querySelector(".sort-arrow");
+    if (!arrow) return;
+    if (col === state.sortCol) {
+      th.classList.add("sorted");
+      arrow.classList.add("active");
+      arrow.textContent = state.sortDir === -1 ? "↓" : "↑";
+    } else {
+      th.classList.remove("sorted");
+      arrow.classList.remove("active");
+    }
+  });
+}
+
+// ─────────────────────────────────────────────
+//  Event Listeners
+// ─────────────────────────────────────────────
+document.getElementById("dataset-toggle").addEventListener("click", e => {
+  const btn = e.target.closest(".toggle-btn");
+  if (!btn) return;
+  document.querySelectorAll("#dataset-toggle .toggle-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  state.dataset = btn.dataset.value;
+  renderTable();
+});
+
+document.getElementById("weight-toggle").addEventListener("click", e => {
+  const btn = e.target.closest(".toggle-btn");
+  if (!btn) return;
+  document.querySelectorAll("#weight-toggle .toggle-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  state.weight = btn.dataset.value;
+  renderTable();
+});
+
+document.querySelector("thead").addEventListener("click", e => {
+  const th = e.target.closest("th[data-col]");
+  if (!th) return;
+  const col = th.dataset.col;
+  if (!col || col === "rank" || col === "ci") return;
+  if (state.sortCol === col) {
+    state.sortDir *= -1;
+  } else {
+    state.sortCol = col;
+    state.sortDir = col === "display" ? 1 : -1;
+  }
+  renderTable();
+});
+
+// Add sort arrows to sortable columns
+document.querySelectorAll("thead th[data-col]").forEach(th => {
+  const col = th.dataset.col;
+  if (col === "rank" || col === "ci") return;
+  if (!th.querySelector(".sort-arrow")) {
+    th.innerHTML += ` <span class="sort-arrow">↕</span>`;
+  }
+});
+
+// Copy citation
+document.getElementById("copy-btn").addEventListener("click", () => {
+  const text = document.getElementById("bibtex").textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("copy-btn");
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.textContent = "Copy"; }, 2000);
+  });
+});
+
+// ── Init ──
+renderTable();
+</script>
+
+</body>
+</html>
