@@ -560,9 +560,15 @@
       max-width: 780px;
       margin: 28px auto 40px;
       padding: 20px 24px;
-      background: var(--bg-subtle);
-      border-left: 3px solid var(--accent);
+      background: #e8ecf3;
+      border-left: 3px solid #b8c8e8;
       border-radius: 0 6px 6px 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .tldr.any-inside {
+      background: var(--bg-subtle);
+      border-left-color: var(--accent);
     }
 
     .tldr-label {
@@ -570,8 +576,13 @@
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: #b8c8e8;
       margin-bottom: 10px;
+      transition: color 0.15s;
+    }
+
+    .tldr.any-inside .tldr-label {
+      color: var(--accent);
     }
 
     .tldr ul {
@@ -585,17 +596,22 @@
 
     .tldr li {
       font-size: 14px;
-      color: var(--text);
+      color: #9daabf;
       line-height: 1.6;
       padding-left: 16px;
       position: relative;
+      transition: color 0.15s;
+    }
+
+    .tldr li.inside {
+      color: var(--text);
     }
 
     .tldr li::before {
       content: "→";
       position: absolute;
       left: 0;
-      color: var(--accent);
+      color: inherit;
       font-weight: 600;
     }
 
@@ -813,11 +829,25 @@
 
     if (hide) return;
     const wRect = win.getBoundingClientRect();
+
+    // Abstract words
     container.querySelectorAll(".word").forEach(span => {
       const r = span.getBoundingClientRect();
       const inside = r.top >= wRect.top - 4 && r.bottom <= wRect.bottom + 4;
       span.classList.toggle("inside", inside);
     });
+
+    // TL;DR items
+    const tldrEl = document.querySelector(".tldr");
+    const tldrItems = tldrEl.querySelectorAll("li");
+    tldrItems.forEach(li => {
+      const r = li.getBoundingClientRect();
+      const center = (r.top + r.bottom) / 2;
+      const inside = center >= wRect.top && center <= wRect.bottom;
+      li.classList.toggle("inside", inside);
+    });
+    const anyInside = Array.from(tldrItems).some(li => li.classList.contains("inside"));
+    tldrEl.classList.toggle("any-inside", anyInside);
   }
 
   window.addEventListener("scroll", update, { passive: true });
