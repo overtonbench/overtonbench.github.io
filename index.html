@@ -20,6 +20,29 @@
   <meta name="twitter:title" content="Benchmarking Overton Pluralism in LLMs">
   <meta name="twitter:description" content="OvertonBench: a benchmark measuring whether LLMs represent the full spectrum of human viewpoints. ICLR 2026.">
   <meta name="twitter:image" content="https://overtonbench.github.io/assets/preview.png">
+  <meta name="description" content="OvertonBench measures Overton pluralism in LLMs — whether models represent the full spectrum of human viewpoints on contested questions. ICLR 2026.">
+
+  <!-- Structured data for Google Scholar / search -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Benchmarking Overton Pluralism in LLMs",
+    "description": "OvertonBench measures Overton pluralism in LLMs — whether models represent the full spectrum of human viewpoints. We introduce OvertonScore, a coverage metric based on crowdsourced opinion clusters, and show that LLM judges can approximate human ratings at scale.",
+    "author": [
+      {"@type": "Person", "name": "Elinor Poole-Dayan", "url": "https://elinorp-d.github.io/"},
+      {"@type": "Person", "name": "Jiayi Wu", "url": "https://jiayiw005.github.io/"},
+      {"@type": "Person", "name": "Taylor Sorensen", "url": "https://tsor13.github.io/"},
+      {"@type": "Person", "name": "Jiaxin Pei", "url": "https://jiaxin-pei.github.io/"},
+      {"@type": "Person", "name": "Michiel A. Bakker", "url": "https://miba.dev/"}
+    ],
+    "datePublished": "2025-12-02",
+    "publisher": {"@type": "Organization", "name": "ICLR 2026"},
+    "url": "https://overtonbench.github.io/",
+    "sameAs": "https://arxiv.org/abs/2512.01351",
+    "keywords": ["LLM evaluation", "pluralism", "alignment", "benchmark", "NLP", "AI fairness"]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -488,6 +511,94 @@
       color: var(--text-secondary);
     }
 
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .nav-link {
+      padding: 11px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ── Explainer ── */
+    .explainer {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      max-width: 780px;
+      margin: 0 auto 24px;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    /* ── TL;DR ── */
+    .tldr {
+      max-width: 780px;
+      margin: 28px auto 40px;
+      padding: 20px 24px;
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .tldr-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .tldr ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .tldr li {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.6;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .tldr li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
     @media (max-width: 640px) {
       header { padding: 40px 0 32px; }
       section { padding: 40px 0; }
@@ -501,6 +612,14 @@
 
 <!-- Overton Window -->
 <div id="overton-window"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-link" href="#abstract">Abstract</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#citation">Citation</a>
+  </div>
+</nav>
 
 <div class="container">
 
@@ -552,7 +671,17 @@
   </header>
 
   <!-- ── Abstract ── -->
-  <section class="abstract">
+  <section class="abstract" id="abstract" style="padding-top: 8px;">
+    <div class="tldr">
+      <div class="tldr-label">TL;DR</div>
+      <ul>
+        <li>Models achieve OvertonScores of 0.35–0.41 on average; DeepSeek V3 performs best, but all models fall far short of the theoretical maximum of 1.0, revealing substantial room for improvement.</li>
+        <li>OvertonScore formalizes pluralistic coverage as the fraction of opinion clusters — derived from a large-scale U.S.-representative study (N = 1,208) — that a model's response represents.</li>
+        <li>An automated LLM judge achieves ρ = 0.88 rank correlation with human OvertonScores, enabling scalable evaluation without repeated human studies.</li>
+        <li>Dataset, code, and benchmark are publicly available to support progress toward more pluralistic LLMs.</li>
+      </ul>
+    </div>
+
     <h2>Abstract</h2>
     <p id="abstract-text"></p>
 
@@ -627,11 +756,21 @@
     </div>
   </section>
 
+  <!-- ── Contact ── -->
+  <section id="contact" style="padding: 32px 0; text-align: center; border-top: none;">
+    <p style="font-size: 14px; color: var(--text-secondary);">
+      Questions or feedback? Reach out to <a href="mailto:elinorpd@mit.edu">Elinor Poole-Dayan</a>.
+    </p>
+  </section>
+
 </div><!-- /container -->
 
 <footer>
   <div class="container">
-    MIT License &mdash; Dataset on <a href="https://huggingface.co/datasets/elinorpd/overtonbench">HuggingFace</a>
+    MIT License &mdash;
+    <a href="https://arxiv.org/abs/2512.01351">Paper</a> &mdash;
+    <a href="https://huggingface.co/datasets/elinorpd/overtonbench">Dataset</a> &mdash;
+    <a href="https://github.com/elinorp-d/overtonbench">Code</a>
   </div>
 </footer>
 
