@@ -226,13 +226,22 @@
       line-height: 1.9;
     }
 
-    .abstract p .word {
+    .word {
       color: #9daabf;
       transition: color 0.15s;
     }
 
-    .abstract p .word.inside {
+    .word.inside {
       color: #1a2035;
+    }
+
+    .ow-block {
+      opacity: 0.15;
+      transition: opacity 0.2s;
+    }
+
+    .ow-block.inside {
+      opacity: 1;
     }
 
     /* ── Overton Window ── */
@@ -245,6 +254,7 @@
       z-index: 10;
       opacity: 0;
       transition: opacity 0.3s;
+      box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.05);
     }
 
     #overton-window::before {
@@ -564,21 +574,21 @@
     <div class="venue-badge">ICLR 2026</div>
     <h1>Benchmarking Overton Pluralism in LLMs</h1>
 
-    <div class="authors">
+    <div class="authors ow-block">
       <a href="https://elinorp-d.github.io/">Elinor Poole-Dayan</a><sup>1</sup>&ensp;
       <a href="https://jiayiw005.github.io/">Jiayi Wu</a><sup>1,2</sup>&ensp;
       <a href="https://tsor13.github.io/">Taylor Sorensen</a><sup>3</sup>&ensp;
       <a href="https://jiaxin-pei.github.io/">Jiaxin Pei</a><sup>4</sup>&ensp;
       <a href="https://miba.dev/">Michiel A. Bakker</a><sup>1</sup>
     </div>
-    <div class="affiliations">
+    <div class="affiliations ow-block">
       <sup>1</sup>MIT &nbsp;&nbsp;
       <sup>2</sup>Brown University &nbsp;&nbsp;
       <sup>3</sup>University of Washington &nbsp;&nbsp;
       <sup>4</sup>Stanford University
     </div>
 
-    <div class="link-buttons">
+    <div class="link-buttons ow-block">
       <a class="btn" href="https://arxiv.org/abs/2512.01351" target="_blank">
         <span class="btn-icon">📄</span> Paper
       </a>
@@ -590,7 +600,7 @@
       </a>
     </div>
 
-    <div class="stats-row">
+    <div class="stats-row ow-block">
       <div class="stat">
         <span class="stat-number">8</span>
         <span class="stat-label">Models Assessed</span>
@@ -612,8 +622,8 @@
     <p id="abstract-text"></p>
 
     <div class="figure-wrap">
-      <img src="assets/fig1.png" alt="Overview of the OvertonBench pipeline: LLM responses are rated by diverse human participants, opinions are clustered, and OvertonScore measures how many clusters a response covers." />
-      <p class="figure-caption">
+      <img class="ow-block" src="assets/fig1.png" alt="Overview of the OvertonBench pipeline: LLM responses are rated by diverse human participants, opinions are clustered, and OvertonScore measures how many clusters a response covers." />
+      <p class="figure-caption ow-block">
         <strong>Figure 1.</strong> OvertonBench pipeline. Prolific participants rate LLM responses on how well they represent their viewpoint. Ratings are clustered into opinion groups, and OvertonScore measures what fraction of clusters a response covers above a threshold τ.
       </p>
     </div>
@@ -703,26 +713,37 @@
 (function () {
   const ABSTRACT = "We introduce OvertonBench, a novel framework for measuring Overton pluralism in LLMs\u2014the extent to which diverse viewpoints are represented in model outputs. We (i) formalize Overton pluralism as a set coverage metric (OvertonScore), (ii) conduct a large-scale U.S.-representative human study (N\u2009=\u20091208; 60 questions; 8 LLMs), and (iii) develop an automated benchmark that closely reproduces human judgments. On average, models achieve OvertonScores of 0.35\u20130.41, with DeepSeek V3 performing best; yet all models remain far below the theoretical maximum of 1.0, revealing substantial headroom for improvement. Because repeated large-scale human studies are costly and slow, scalable evaluation tools are essential for model development. Hence, we propose an automated benchmark that achieves high rank correlation with human judgments (\u03c1\u2009=\u20090.88), providing a practical proxy without replacing human assessment. By turning pluralistic alignment from a normative aim into a measurable benchmark, our work establishes a foundation for systematic progress toward more pluralistic LLMs.";
 
-  // Build word spans
+  // Build word spans helper
+  function wrapInSpans(el, text) {
+    const words = text.split(" ");
+    el.innerHTML = "";
+    words.forEach((word, i) => {
+      const span = document.createElement("span");
+      span.className = "word";
+      span.textContent = word;
+      el.appendChild(span);
+      if (i < words.length - 1) el.appendChild(document.createTextNode(" "));
+    });
+  }
+
+  // Wrap h1 and abstract in word spans
+  const h1El = document.querySelector("h1");
+  wrapInSpans(h1El, h1El.textContent);
+
   const container = document.getElementById("abstract-text");
-  ABSTRACT.split(" ").forEach((word, i) => {
-    const span = document.createElement("span");
-    span.className = "word";
-    span.textContent = word;
-    container.appendChild(span);
-    if (i < ABSTRACT.split(" ").length - 1) container.appendChild(document.createTextNode(" "));
-  });
+  wrapInSpans(container, ABSTRACT);
+
+  const blockEls = document.querySelectorAll(".ow-block");
 
   const win = document.getElementById("overton-window");
   const resultsSection = document.getElementById("results");
-  const titleEl = document.querySelector("h1");
   const statsEl = document.querySelector(".stats-row");
 
   let boxTop, boxH;
 
   function positionBox() {
     const scrollY = window.scrollY;
-    const tRect = titleEl.getBoundingClientRect();
+    const tRect = h1El.getBoundingClientRect();
     const sRect = statsEl.getBoundingClientRect();
     const pad = 16;
     // Add scrollY to convert viewport-relative coords to document-relative (= viewport pos at scroll=0)
@@ -742,10 +763,19 @@
 
     if (hide) return;
     const wRect = win.getBoundingClientRect();
-    container.querySelectorAll(".word").forEach(span => {
+
+    // Word-level effect (h1 + abstract)
+    document.querySelectorAll(".word").forEach(span => {
       const r = span.getBoundingClientRect();
       const inside = r.top >= wRect.top - 4 && r.bottom <= wRect.bottom + 4;
       span.classList.toggle("inside", inside);
+    });
+
+    // Block-level effect (authors, affiliations, links, stats, figure)
+    blockEls.forEach(el => {
+      const r = el.getBoundingClientRect();
+      const inside = r.bottom > wRect.top && r.top < wRect.bottom;
+      el.classList.toggle("inside", inside);
     });
   }
 
