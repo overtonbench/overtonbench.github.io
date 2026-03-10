@@ -131,6 +131,47 @@
 
     .btn-icon { font-size: 16px; line-height: 1; }
 
+    /* ── Stats row ── */
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      padding: 12px 32px;
+      text-align: center;
+      border-left: 1px solid var(--border);
+    }
+
+    .stat:first-child { border-left: none; }
+
+    .stat-number {
+      font-family: 'Lora', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-top: 5px;
+      display: block;
+    }
+
+    @media (max-width: 480px) {
+      .stat { padding: 10px 18px; }
+      .stat-number { font-size: 22px; }
+    }
+
     /* ── Abstract ── */
     .abstract p {
       font-size: 15.5px;
@@ -477,6 +518,21 @@
         <span class="btn-icon">💻</span> Code
       </a>
     </div>
+
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-number">8</span>
+        <span class="stat-label">Models Assessed</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">60</span>
+        <span class="stat-label">Questions</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">28,992</span>
+        <span class="stat-label">Human Ratings</span>
+      </div>
+    </div>
   </header>
 
   <!-- ── Abstract ── -->
@@ -584,10 +640,13 @@
   const resultsSection = document.getElementById("results");
   const BOX_H = 320;
 
-  // Position box to frame the header at load time — fixed for the whole session
-  const header = document.querySelector("header");
-  const hRect = header.getBoundingClientRect();
-  const boxTop = Math.max(8, hRect.top + hRect.height / 2 - BOX_H / 2);
+  // Position box to frame title → stats row (excluding venue badge and link buttons)
+  const titleEl  = document.querySelector("h1");
+  const statsEl  = document.querySelector(".stats-row");
+  const tRect = titleEl.getBoundingClientRect();
+  const sRect = statsEl.getBoundingClientRect();
+  const contentMid = (tRect.top + sRect.bottom) / 2;
+  const boxTop = Math.round(contentMid - BOX_H / 2);
   win.style.top = boxTop + "px";
 
   function update() {
