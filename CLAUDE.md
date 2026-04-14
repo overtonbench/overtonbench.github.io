@@ -13,10 +13,17 @@ The **code and data repo** is at `~/code/overtonbench/`. The site's `index.html`
 ```
 overtonbench-site/
 ├── index.html        # The entire site — HTML, CSS, and JS in one file
+├── poster/
+│   └── index.html    # ICLR 2026 poster — A0 landscape, print-to-PDF via Chrome
 └── assets/
-    ├── fig1.png        # Full-resolution figure (7576×3050px) — used on the page
+    ├── fig1.png        # Full-resolution figure (7576×3050px) — available but not currently used in poster
     ├── screenshot.png  # 1200×629px — used for OG/Twitter link previews
-    └── preview.png     # Older preview image, no longer used for OG tags
+    ├── preview.png     # Older preview image, no longer used for OG tags
+    ├── qrcode.png      # QR code pointing to overtonbench.github.io
+    ├── MIT_logo.png    # University logos for poster header
+    ├── Brown_logo.png
+    ├── UW_logo.png
+    └── Stanford_logo.png
 ```
 
 ## Deploying
@@ -74,3 +81,12 @@ Each `.md` file has two tables: `KMEANS` (unweighted) and `KMEANS weighted`. The
 - **Single file**: No build step, no framework, no external dependencies beyond Google Fonts. Just edit and push.
 - **Overton Window box position**: Calculated once at load from `header.getBoundingClientRect()`, stored in `window._overtonBoxTop`. The Abstract nav link uses this to scroll so the text starts just inside the box.
 - **OG image**: `screenshot.png` is used (not `fig1.png`) because the full-res image is ~20MB and Twitter/Slack silently drop images over ~5MB.
+
+## Poster (`poster/index.html`)
+
+A0 landscape (1189×841mm) HTML poster, print-to-PDF via Chrome at 300 DPI.
+
+- **External dependencies**: Google Fonts + **KaTeX** (v0.16.9 from jsDelivr CDN) for math rendering. KaTeX renders to pure HTML/CSS DOM (not canvas), so it prints correctly. Requires internet connection when printing.
+- **Viewport scaler**: JS `transform: scale()` shrinks the poster to fit the browser window for preview. `@media print` removes the transform.
+- **Math**: Use `$$...$$` for display math and `$...$` for inline math — auto-rendered by KaTeX's `renderMathInElement` on DOMContentLoaded.
+- **Coverage example**: The three-step visualization in col 2 uses the carbon emissions question from the paper (K=3 clusters: 49/8/3 out of 60 participants). Rating bars for GPT o4-mini are directionally correct (C₁ above majority threshold, C₂ and C₃ below) but approximate — update with actual values from the data if needed.
