@@ -76,18 +76,10 @@
       padding: 5mm 8mm;
       border-radius: 12px;
       text-align: center;
-    }
-
-    .title-box::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      padding: 10px;
-      background: var(--rainbow);
-      border-radius: 12px;
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
+      border: 10px solid transparent;
+      background:
+        linear-gradient(var(--bg), var(--bg)) padding-box,
+        var(--rainbow) border-box;
     }
 
     .venue-badge {
