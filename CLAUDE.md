@@ -14,8 +14,9 @@ The **code and data repo** is at `~/code/overtonbench/`. The site's `index.html`
 overtonbench-site/
 ├── index.html        # The entire site — HTML, CSS, and JS in one file
 └── assets/
-    ├── fig1.png      # Full-resolution figure (7576×3050px) — used on the page
-    └── preview.png   # Resized (1200×483px) — used for OG/Twitter link previews
+    ├── fig1.png        # Full-resolution figure (7576×3050px) — used on the page
+    ├── screenshot.png  # 1200×629px — used for OG/Twitter link previews
+    └── preview.png     # Older preview image, no longer used for OG tags
 ```
 
 ## Deploying
@@ -72,4 +73,4 @@ Each `.md` file has two tables: `KMEANS` (unweighted) and `KMEANS weighted`. The
 
 - **Single file**: No build step, no framework, no external dependencies beyond Google Fonts. Just edit and push.
 - **Overton Window box position**: Calculated once at load from `header.getBoundingClientRect()`, stored in `window._overtonBoxTop`. The Abstract nav link uses this to scroll so the text starts just inside the box.
-- **OG image**: `preview.png` is used (not `fig1.png`) because the full-res image is ~20MB and Twitter/Slack silently drop images over ~5MB.
+- **OG image**: `screenshot.png` is used (not `fig1.png`) because the full-res image is ~20MB and Twitter/Slack silently drop images over ~5MB.
