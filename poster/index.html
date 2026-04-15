@@ -179,7 +179,7 @@
 
     .text-sec { color: var(--text-sec); }
     .text-sm  { font-size: 24pt; }
-    .text-xs  { font-size: 21pt; }
+    .text-xs  { font-size: 20pt; }
     .mt-sm    { margin-top: 3mm; }
 
     hr.rule { border: none; border-top: 1px solid var(--border); margin: 4mm 0; }
@@ -193,7 +193,7 @@
       padding: 3mm 5mm;
       margin: 4mm 0;
     }
-    .callout p { font-size: 33pt; font-weight: 600; color: var(--accent); }
+    .callout p { font-size: 42pt; font-weight: 600; color: var(--accent); }
 
     /* ── Coverage dots ── */
     .coverage-dots { display: flex; gap: 3mm; align-items: center; margin: 3mm 0 2mm; }
@@ -662,15 +662,14 @@
 
         <div class="rainbow-rule" style="height:8px; margin: 5mm 0;"></div>
 
-        <div class="card-subtitle">Overton Pluralism</div>
-        <p>Given a subjective query (no single correct answer), an <strong>Overton pluralistic model</strong> should represent the &ldquo;Overton window&rdquo;<sup>1</sup>&mdash;the <em>full spectrum</em> of reasonable perspectives&mdash;in its response.</p>
+        <p>Given a subjective query (no single correct answer), an <strong style="color: var(--accent);">Overton pluralistic model</strong> should represent the &ldquo;Overton window&rdquo;<sup>1</sup>&mdash;the <em>full spectrum</em> of reasonable perspectives&mdash;in its response.</p>
 
         <div class="callout mt-sm">
           <p>We introduce <strong>OvertonBench</strong>, a novel framework for measuring Overton pluralism in LLMs grounded in human viewpoints.</p>
         </div>
 
         <hr class="rule" style="margin-top: 5mm;">
-        <p class="text-xs text-sec"><sup>1</sup> Generalized from the political science concept: &ldquo;the spectrum of ideas on public policy and social issues considered acceptable or viable by the general public at a given time&rdquo; (OED, 2023).</p>
+        <p class="text-xs text-sec"><sup>1</sup> Generalized from political science: &ldquo;the spectrum of ideas on public policy and social issues considered acceptable or viable by the general public at a given time&rdquo; (OED, 2023).</p>
       </div>
 
       <div class="card" style="flex: 1;">
