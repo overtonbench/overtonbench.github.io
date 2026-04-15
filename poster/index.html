@@ -25,7 +25,7 @@
       --rainbow: linear-gradient(90deg, #e74c3c, #f39c12, #f1c40f, #2ecc71, #3498db, #9b59b6, #e74c3c);
     }
 
-    @page { size: 1219.2mm 914.4mm; margin: 0; }
+    @page { size: 1295.4mm 914.4mm; margin: 0; }
 
     html { background: #aaa; }
 
@@ -42,9 +42,9 @@
       body { display: block; }
     }
 
-    /* ── 48×36 in (1219.2 × 914.4 mm) ── */
+    /* ── 51×36 in (1295.4 × 914.4 mm) ── */
     .poster {
-      width: 1219.2mm;
+      width: 1295.4mm;
       height: 914.4mm;
       background: var(--bg);
       font-family: 'Inter', sans-serif;
@@ -59,13 +59,13 @@
     }
 
     @media print {
-      .poster { transform: none !important; width: 1219.2mm; height: 914.4mm; overflow: hidden; }
+      .poster { transform: none !important; width: 1295.4mm; height: 914.4mm; overflow: hidden; }
     }
 
     /* ════════════════ HEADER ════════════════ */
     .poster-header {
       display: grid;
-      grid-template-columns: minmax(250mm, 1fr) 760mm minmax(80mm, 1fr);
+      grid-template-columns: minmax(250mm, 1fr) 715mm minmax(80mm, 1fr);
       gap: 8mm;
       align-items: center;
       flex-shrink: 0;
@@ -104,7 +104,7 @@
     }
 
     .authors {
-      font-size: 38pt;
+      font-size: 33pt;
       font-weight: 500;
       color: var(--text);
       line-height: 1.3;
@@ -119,7 +119,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6mm;
+      gap: 1mm;
     }
 
     .header-qr {
@@ -133,12 +133,12 @@
       display: block;
     }
 
-    .uni-logo { flex: 1 1 0; height: 50mm; min-width: 0; object-fit: contain; }
+    .uni-logo { flex: 0 0 auto; height: 52.5mm; object-fit: contain; }
 
     /* ════════════════ BODY ════════════════ */
     .poster-body {
       display: grid;
-      grid-template-columns: 253mm 445mm 1fr;
+      grid-template-columns: 329mm 445mm 1fr;
       gap: 8mm;
       flex: 1;
       min-height: 0;
@@ -151,7 +151,7 @@
       background: var(--bg-sub);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 7mm 10mm 4mm;
+      padding: 7mm 10mm 2mm;
     }
 
     .card-title {
@@ -229,7 +229,7 @@
       border-radius: 8px;
       padding: 1.5mm 3mm;
     }
-    .data-num  { font-family: 'Lora', serif; font-size: 38pt; font-weight: 700; color: var(--accent); line-height: 1.05; display: inline; }
+    .data-num  { font-family: 'Lora', serif; font-size: 33pt; font-weight: 700; color: var(--accent); line-height: 1.05; display: inline; }
     .data-desc { font-size: 33pt; color: var(--text-sec); line-height: 1.3; display: inline; }
 
     /* ── Figure ── */
@@ -612,7 +612,7 @@
       <img class="uni-logo" src="../assets/MIT_logo.png" alt="MIT">
       <img class="uni-logo" src="../assets/Brown_logo.png" alt="Brown">
       <img class="uni-logo" src="../assets/UW_logo.png" alt="UW">
-      <img class="uni-logo" src="../assets/Stanford_logo.png" alt="Stanford">
+      <img class="uni-logo" src="../assets/Stanford_logo.png" alt="Stanford" style="margin-left: 5mm;">
     </div>
 
     <div class="title-box">
@@ -647,37 +647,49 @@
       <div class="card" style="flex: 1.3;">
         <div class="card-title">Motivation</div>
 
-        <p>LLMs increasingly shape public discourse on contested topics. Most alignment methods optimize for a single &ldquo;correct&rdquo; response &mdash; but for value-laden questions, <strong>different people legitimately hold different views</strong>.</p>
+        <ul>
+          <li>LLMs are central to how information is produced and consumed, <em>influencing human beliefs and values at scale</em>.</li>
+          <li>Traditional alignment methods that aggregate over diverse preferences risk:
+            <ul>
+              <li>erasing viewpoints &rarr; <strong>algorithmic monoculture</strong></li>
+              <li>collapsing genuine disagreement &rarr; <strong>value monism</strong></li>
+              <li>response homogeneity &rarr; <strong>epistemic breakdown</strong></li>
+            </ul>
+          </li>
+        </ul>
 
-        <p class="mt-sm">A model that consistently reflects only one perspective narrows the discourse it participates in.</p>
+        <p class="mt-sm"><strong style="color: var(--accent);">Pluralistic alignment</strong> offers an alternative: models should be able to represent diverse perspectives + values faithfully.</p>
 
-        <div class="rainbow-rule"></div>
+        <div class="rainbow-rule" style="height:8px; margin: 5mm 0;"></div>
 
-        <div class="card-subtitle">The Overton Window</div>
-        <p>The <em>Overton Window</em> describes the range of ideas considered acceptable in public discourse. We extend this: <strong>does a model represent the full spectrum of viewpoints people actually hold?</strong></p>
+        <div class="card-subtitle">Overton Pluralism</div>
+        <p>Given a subjective query (no single correct answer), an <strong>Overton pluralistic model</strong> should represent the &ldquo;Overton window&rdquo;<sup>1</sup>&mdash;the <em>full spectrum</em> of reasonable perspectives&mdash;in its response.</p>
 
         <div class="callout mt-sm">
-          <p>No prior benchmark has measured whether LLMs represent the full distribution of human viewpoints on contested questions.</p>
+          <p>We introduce <strong>OvertonBench</strong>, a novel framework for measuring Overton pluralism in LLMs grounded in human viewpoints.</p>
         </div>
+
+        <hr class="rule" style="margin-top: 5mm;">
+        <p class="text-xs text-sec"><sup>1</sup> Generalized from the political science concept: &ldquo;the spectrum of ideas on public policy and social issues considered acceptable or viable by the general public at a given time&rdquo; (OED, 2023).</p>
       </div>
 
       <div class="card" style="flex: 1;">
         <div class="card-title">Operationalizing Coverage</div>
 
-        <p>Participants are grouped into <strong>K opinion clusters</strong> via k-means on rating patterns. Cluster $k$ is <em>covered</em> if a majority of its members rate the response $\geq \tau$.</p>
+        <p>For a subjective query $x$, the Overton window is the <em>set</em> of reasonable answers $W(x) = \{y_i\}_{1}^{k}$. If a majority of humans holding viewpoint $y \in W(x)$ feel a model response represents their view, $y \in \mathcal{M}(x)$ is covered.</p>
 
         <div class="formula-box mt-sm">
-          <div class="formula-label">Coverage for question $q$:</div>
-          <div style="text-align:center; padding: 2mm 0;">$$\text{Coverage}(M, q) = \frac{\left|\left\{k : \text{maj}(C_k) \geq \tau\right\}\right|}{K}$$</div>
-          <hr class="rule">
-          <div class="formula-label">OvertonScore (OLS-adjusted):</div>
-          <div style="text-align:center; padding: 2mm 0;">$$\text{OvertonScore}(M) = \frac{1}{|Q|} \sum_{q \in Q} \text{Coverage}(M, q)$$</div>
+          <div style="text-align:center; padding: 2mm 0; font-size: 33pt;">$$\text{Coverage}(\mathcal{M}, x) = \frac{1}{|W(x)|} \sum_{y \in W(x)} \mathbb{1}\{y \in \mathcal{M}(x)\}$$</div>
         </div>
 
-        <hr class="rule">
+        <p class="mt-sm">The <strong>OvertonScore</strong> for a model $\mathcal{M}$ over a set of queries $X = \{x_1, \ldots, x_n\}$ is the average Coverage:</p>
 
-        <div class="card-subtitle">Weighted OvertonScore</div>
-        <p class="text-sm text-sec">Clusters <strong style="color:var(--text);">weighted by population size</strong> — accounts for group sizes, not just counts. Scores (0.43–0.53) show the same ordinal pattern as unweighted (0.35–0.42).</p>
+        <div class="formula-box mt-sm">
+          <div style="text-align:center; padding: 2mm 0; font-size: 33pt;">$$\text{OvertonScore}(\mathcal{M}, X) = \frac{1}{n} \sum_{i=1}^{n} \text{Coverage}(\mathcal{M}, x_i)$$</div>
+        </div>
+
+        <p class="mt-sm">By construction, the max <strong>OvertonScore</strong> is 1.0.</p>
+
       </div>
 
     </div>
@@ -1232,7 +1244,7 @@
 <script>
 function scalePoster() {
   var p = document.getElementById('poster');
-  var PW = 1219.2 * (96 / 25.4);  // 48in in CSS px ≈ 4608
+  var PW = 1295.4 * (96 / 25.4);  // 51in in CSS px ≈ 4896
   var PH = 914.4  * (96 / 25.4);  // 36in in CSS px ≈ 3456
   var s = Math.min((window.innerWidth - 8) / PW, (window.innerHeight - 8) / PH);
   p.style.transform = 'scale(' + s + ')';
