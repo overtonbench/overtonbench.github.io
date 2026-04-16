@@ -1049,10 +1049,12 @@
           </div>
         </div>
 
-        <p class="chart-note">OLS-adjusted for question fixed effects &nbsp;&bull;&nbsp; 95% bootstrap CIs (1,000 resamples) &nbsp;&bull;&nbsp; &tau;&thinsp;=&thinsp;4.0 &nbsp;&bull;&nbsp; theoretical max&thinsp;=&thinsp;1.0</p>
-        <p style="margin: 2mm 0 0; font-family:'Lora',serif;"><strong>Table 1:</strong> <strong>OvertonBench</strong> results (full dataset, unweighted).</p>
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:2mm;">
+          <p style="margin:0; font-family:'Lora',serif; flex:0 0 63%;"><strong>Table 1:</strong> <strong>OvertonBench</strong> results (all qs, unweighted).</p>
+          <p class="chart-note" style="margin:0; flex:0 0 37%; text-align:right;">95% bootstrap CIs (1k samples) &nbsp;&bull;&nbsp; &tau;&thinsp;=&thinsp;4.0</p>
+        </div>
         <div class="callout" style="margin-top:3mm;">
-          <p style="font-size:28pt;">💡 <strong>Key Takeaway:</strong> All model scores (0.35–0.41; high CI overlap) remain far below the theoretical maximum of 1.0 &rarr; existing LLMs capture only a fraction of the Overton window.</p>
+          <p style="font-size:32pt;">💡 <strong>Key Takeaway:</strong> All model scores (0.35–0.41) remain far below the maximum of 1.0 &rarr; LLMs capture only a fraction of the Overton window.</p>
         </div>
 
         <!-- ── By-dataset split ── -->
@@ -1167,15 +1169,15 @@
         </div><!-- /mini-charts-grid -->
         <p style="margin: 2mm 0 0; font-family:'Lora',serif;"><strong>Table 2:</strong> <strong>OvertonBench</strong> results split by question source (unweighted).</p>
         <div class="callout" style="margin-top:3mm;">
-          <p style="font-size:28pt;">💡 <strong>Key Takeaway:</strong> <em>No single model is uniformly most pluralistic.</em> o4-mini performs best on political topics but worse on diverse value-laden topics; DeepSeek V3 shows the reverse.</p>
+          <p style="font-size:32pt;">💡 <strong>Key Takeaway:</strong> <em>No model is uniformly most pluralistic.</em> o4-mini performs best on political topics but worse on diverse topics; DeepSeek V3 shows the reverse.</p>
         </div>
       </div><!-- /results card -->
 
       <div class="card">
         <div class="card-title">Automated Benchmark</div>
-        <p>Repeated human studies are costly &rarr; we test Gemini 2.5 Pro as an automated LLM judge for OvertonScore.</p>
+        <p>Repeated human studies are costly &rarr; we use Gemini 2.5 Pro to predict human ratings and automatically score unseen models.</p>
         <div class="callout" style="margin-top:3mm;">
-          <p style="font-size:28pt;">💡 <strong>Key Takeaway:</strong> Our automated benchmark reproduces human scores with high rank correlation (&rho;&thinsp;=&thinsp;0.88), providing a scalable proxy without replacing human assessment.</p>
+          <p style="font-size:32pt;">💡 <strong>Key Takeaway:</strong> Our automated benchmark reproduces human scores with high rank correlation (&rho;&thinsp;=&thinsp;0.88), providing a scalable evaluation proxy.</p>
         </div>
       </div><!-- /automated benchmark card -->
 
@@ -1244,7 +1246,7 @@
           <!-- Text -->
           <div style="flex:1; min-width:0; padding-top:3mm;">
             <div class="callout">
-              <p style="font-size:28pt;">💡 <strong>Key Takeaway:</strong> Political neutrality<sup>2</sup> and pluralism are <em>negatively correlated</em> and <em>distinct</em> concepts.</p>
+              <p style="font-size:32pt;">💡 <strong>Key Takeaway:</strong> Political neutrality<sup>2</sup> and pluralism are <em>negatively correlated</em> and <em>distinct</em> concepts.</p>
             </div>
             <p class="text-xs text-sec" style="margin-top:3mm;"><sup>2</sup> The model slant metric (Westwood et al., 2025) captures perceived bipartisan political slant via pairwise human evaluations, where slant scores closer to zero indicate greater perceived neutrality.</p>
           </div>
