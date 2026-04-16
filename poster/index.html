@@ -681,7 +681,7 @@
             <span class="data-num">8</span>&ensp;<span class="data-desc">LLMs evaluated per q</span>
           </div>
           <div class="data-cell">
-            <span class="data-num">60</span>&ensp;<span class="data-desc">questions: 15 political (Model Slant dataset) + 45 diverse value-laden topics (PRISM dataset)</span>
+            <span class="data-num">60</span>&ensp;<span class="data-desc">questions: 15 politically salient (Model Slant dataset) + 45 diverse value-laden (PRISM dataset)</span>
           </div>
           <div class="data-cell">
             <span class="data-num">28,992</span>&ensp;<span class="data-desc">human ratings</span>
@@ -1054,7 +1054,7 @@
           <p class="chart-note" style="margin:0; flex:0 0 37%; text-align:right;">95% bootstrap CIs (1k samples) &nbsp;&bull;&nbsp; &tau;&thinsp;=&thinsp;4.0</p>
         </div>
         <div class="callout" style="margin-top:3mm;">
-          <p style="font-size:32pt;">💡 <strong>Key Takeaway:</strong> All model scores (0.35–0.41) remain far below the maximum of 1.0 &rarr; LLMs capture only a fraction of the Overton window.</p>
+          <p style="font-size:34pt;">💡 <strong>Key Takeaway:</strong> All model scores (0.35–0.41) remain far below the maximum of 1.0 &rarr; LLMs capture only a fraction of the Overton window.</p>
         </div>
 
         <!-- ── By-dataset split ── -->
@@ -1175,9 +1175,9 @@
 
       <div class="card">
         <div class="card-title">Automated Benchmark</div>
-        <p>Repeated human studies are costly &rarr; we use Gemini 2.5 Pro to predict human ratings and automatically score unseen models.</p>
+        <p>Repeated human studies are costly &rarr; we use Gemini 2.5 Pro to predict human ratings, enabling automated scoring of unseen models.</p>
         <div class="callout" style="margin-top:3mm;">
-          <p style="font-size:32pt;">💡 <strong>Key Takeaway:</strong> Our automated benchmark reproduces human scores with high rank correlation (&rho;&thinsp;=&thinsp;0.88), providing a scalable evaluation proxy.</p>
+          <p style="font-size:34pt;">💡 <strong>Key Takeaway:</strong> Our LLM judge reproduces human scores with high rank correlation (&rho;&thinsp;=&thinsp;0.88), providing a scalable evaluation proxy.</p>
         </div>
       </div><!-- /automated benchmark card -->
 
@@ -1187,7 +1187,7 @@
 
           <!-- Scatter plot -->
           <div style="flex:0 0 57%; min-width:0;">
-            <svg viewBox="0 0 540 266" style="width:100%;height:auto;display:block;">
+            <svg viewBox="0 0 540 261" style="width:100%;height:auto;display:block;">
               <!-- Grid lines -->
               <line x1="75"  y1="176" x2="510" y2="176" stroke="#e0e6f0" stroke-width="1"/>
               <line x1="75"  y1="131" x2="510" y2="131" stroke="#e0e6f0" stroke-width="1"/>
@@ -1229,7 +1229,7 @@
               <!-- Point labels -->
               <text x="117" y="33"  font-family="Inter,sans-serif" font-size="16" fill="#1a2035" text-anchor="middle">o4-mini</text>
               <text x="139" y="132" font-family="Inter,sans-serif" font-size="16" fill="#1a2035" text-anchor="middle">GPT-4.1</text>
-              <text x="228" y="170" font-family="Inter,sans-serif" font-size="16" fill="#1a2035" text-anchor="middle">Llama 4 Mav.</text>
+              <text x="228" y="175" font-family="Inter,sans-serif" font-size="16" fill="#1a2035" text-anchor="middle">Llama 4 Mav.</text>
               <text x="291" y="109" font-family="Inter,sans-serif" font-size="16" fill="#1a2035" text-anchor="middle">Llama 3.3</text>
               <text x="344" y="85"  font-family="Inter,sans-serif" font-size="16" fill="#1a2035" text-anchor="middle">DeepSeek R1</text>
               <text x="371" y="178" font-family="Inter,sans-serif" font-size="16" fill="#1a2035" text-anchor="middle">Claude 3.7</text>
@@ -1246,9 +1246,9 @@
           <!-- Text -->
           <div style="flex:1; min-width:0; padding-top:3mm;">
             <div class="callout">
-              <p style="font-size:32pt;">💡 <strong>Key Takeaway:</strong> Political neutrality<sup>2</sup> and pluralism are <em>negatively correlated</em> and <em>distinct</em> concepts.</p>
+              <p style="font-size:34pt;">💡 <strong>Key Takeaway:</strong> Political neutrality<sup>2</sup> and pluralism are <em>negatively correlated</em> and <em>distinct</em> concepts.</p>
             </div>
-            <p class="text-xs text-sec" style="margin-top:3mm;"><sup>2</sup> The model slant metric (Westwood et al., 2025) captures perceived bipartisan political slant via pairwise human evaluations, where slant scores closer to zero indicate greater perceived neutrality.</p>
+            <p class="text-xs text-sec" style="margin-top:3mm;"><sup>2</sup> The model slant metric (Westwood, 2025) measures bipartisan political slant, where scores closer to zero indicate greater perceived neutrality by humans.</p>
           </div>
 
         </div>
